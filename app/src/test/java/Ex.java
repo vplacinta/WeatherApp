@@ -4,7 +4,9 @@
 
 public class Ex {
     public static void main(String[] args) {
-        System.out.println("Hello Vova");
+        System.out.println("Hello hjkVova");
+        System.out.println();
+        System.out.println();
         System.out.println();
     }
 }
