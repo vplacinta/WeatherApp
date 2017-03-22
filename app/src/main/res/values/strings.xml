@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">WeatherApp</string>
+    <string name="str_toolbar_item">New Activity</string>
 </resources>
