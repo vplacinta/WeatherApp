@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">WeatherApp</string>
     <string name="new_activity">New Activity</string>
+    <string name="item_text">Item selected</string>
 </resources>
