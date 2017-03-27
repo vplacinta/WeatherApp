@@ -6,6 +6,12 @@
         android:id="@+id/item_newactivity"
         android:icon="@mipmap/ic_launcher"
         android:title="@string/new_activity"
-        app:showAsAction="withText"/>
+        app:showAsAction="withText" />
+
+    <item
+        android:id="@+id/item_refresh"
+        android:icon="@mipmap/ic_launcher"
+        android:title="@string/item_refresh_data"
+        app:showAsAction="withText" />
 
 </menu>
