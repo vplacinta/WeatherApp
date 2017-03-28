@@ -1,30 +1,17 @@
 package com.internship.weatherapp;
 
-/**
- * Created by apersin on 21-Mar-17.
- */
 
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import com.internship.weatherapp.model.List;
 import com.internship.weatherapp.model.WeatherResponse;
-
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder> {
-    @BindView(R.id.swiperefresh)
-    SwipeRefreshLayout swiperefresh;
 
     private WeatherResponse weatherList;
 
@@ -40,7 +27,6 @@ public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder> {
         }
     }
 
-
     public Adapter(WeatherResponse weatherList) {
         this.weatherList = weatherList;
     }
@@ -55,7 +41,6 @@ public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder> {
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
 
-
        java.util.List<com.internship.weatherapp.model.List> list = weatherList.getList();
         java.util.Date date=new java.util.Date(   list.get(position).getDt().longValue() *1000);
         SimpleDateFormat dt1 = new SimpleDateFormat("EE, dd-MM-yyyy");
@@ -64,9 +49,6 @@ public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder> {
         holder.dayState.setText(list.get(position).getWeather().get(0).getDescription().toString());
         holder.maxTemperature.setText(list.get(position).getTemp().getMax().intValue()+"°C");
         holder.minTemperature.setText(list.get(position).getTemp().getMin().intValue()+"°C");
-
-
-
     }
 
     @Override
