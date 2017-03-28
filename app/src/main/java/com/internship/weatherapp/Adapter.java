@@ -4,7 +4,7 @@ package com.internship.weatherapp;
  * Created by apersin on 21-Mar-17.
  */
 
-import android.content.Context;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 
 import android.view.LayoutInflater;
@@ -12,14 +12,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.internship.weatherapp.model.List;
+import com.internship.weatherapp.model.WeatherResponse;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder> {
+    @BindView(R.id.swiperefresh)
+    SwipeRefreshLayout swiperefresh;
 
-    private ArrayList<Wheather> wheatherList;
+    private WeatherResponse weatherList;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.dayName) TextView dayName;
@@ -34,8 +41,8 @@ public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder> {
     }
 
 
-    public Adapter(ArrayList<Wheather> wheatherList) {
-        this.wheatherList = wheatherList;
+    public Adapter(WeatherResponse weatherList) {
+        this.weatherList = weatherList;
     }
 
     @Override
@@ -47,17 +54,24 @@ public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder> {
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        Wheather wheather = wheatherList.get(position);
-        holder.dayName.setText(wheather.getDayName());
-        holder.dayState.setText(wheather.getDayState());
-        holder.maxTemperature.setText(wheather.getMaxTemperature());
-        holder.minTemperature.setText(wheather.getMinTemperature());
+
+
+       java.util.List<com.internship.weatherapp.model.List> list = weatherList.getList();
+        java.util.Date date=new java.util.Date(   list.get(position).getDt().longValue() *1000);
+        SimpleDateFormat dt1 = new SimpleDateFormat("EE, dd-MM-yyyy");
+        holder.dayName.setText(dt1.format(date));
+
+        holder.dayState.setText(list.get(position).getWeather().get(0).getDescription().toString());
+        holder.maxTemperature.setText(list.get(position).getTemp().getMax().intValue()+"°C");
+        holder.minTemperature.setText(list.get(position).getTemp().getMin().intValue()+"°C");
+
+
 
     }
 
     @Override
     public int getItemCount() {
-        return wheatherList.size();
+        return  weatherList.getList().size();
     }
 
 
