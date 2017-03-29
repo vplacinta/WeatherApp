@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<CheckBoxPreference
+    android:key="dayName"
+    android:title="Show day of week"
+    android:summary="Choose"
+    android:defaultValue="true"
+    ></CheckBoxPreference>
+
+    <CheckBoxPreference
+        android:key="dayState"
+        android:title="Show weather"
+        android:summary="Choose"
+        android:defaultValue="true"
+        ></CheckBoxPreference>
+
+    <CheckBoxPreference
+        android:key="minTemperature"
+        android:title="Show minTemperature"
+        android:summary="Choose"
+
+        android:defaultValue="true"
+        ></CheckBoxPreference>
+
+    <CheckBoxPreference
+        android:key="maxTemperature"
+        android:title="Show maxTemperature"
+        android:summary="Choose"
+        android:defaultValue="true"
+        ></CheckBoxPreference>
+
+    <CheckBoxPreference
+        android:key="imageView"
+        android:title="Show image"
+        android:summary="Choose"
+        android:defaultValue="true"
+        ></CheckBoxPreference>
+
+    <CheckBoxPreference
+        android:key="DarkTheme"
+        android:title="Dark theme"
+        android:summary="Choose theme"
+        android:defaultValue="false"
+        ></CheckBoxPreference>
+
+    <CheckBoxPreference
+        android:key="Location"
+        android:title="Show Location"
+        android:summary="Choose"
+        android:defaultValue="true"
+        ></CheckBoxPreference>
+</PreferenceScreen>
