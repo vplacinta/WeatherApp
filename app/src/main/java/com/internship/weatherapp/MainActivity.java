@@ -27,12 +27,17 @@ public class MainActivity extends AppCompatActivity {
     private WeatherResponse weatherList;
     private Adapter mAdapter;
     private Unbinder unbinder;
+    private static String LOCATION="Mountain View";
+    private static String MODE="json";
+    private static String UNITS="metric";
+    private static int DAYS_COUNT=5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         ButterKnife.bind(this);
+        unbinder = ButterKnife.bind(this);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
@@ -54,12 +59,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void makeRequest() {
-        ApiFactory.createAPI().getData("Mountain View", "json", "metric", 5).enqueue(new Callback<WeatherResponse>() {
+        ApiFactory apiFactory= new ApiFactory();
+        apiFactory.createAPI(getBaseContext()).getData(LOCATION, MODE, UNITS, DAYS_COUNT).enqueue(new Callback<WeatherResponse>() {
 
             @Override
             public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
                 weatherList = response.body();
-                Toast.makeText(MainActivity.this, "Data has updated ", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, getResources().getText(R.string.on_response_text), Toast.LENGTH_SHORT).show();
                 mAdapter = new Adapter(weatherList);
                 recyclerView.setAdapter(mAdapter);
                 swiperefresh.setRefreshing(false);
@@ -67,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<WeatherResponse> call, Throwable t) {
-                Toast.makeText(MainActivity.this, "Network problem", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, getResources().getText(R.string.on_failure_text), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -82,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.item:
-                Toast.makeText(this, "ActivityTwo", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getResources().getText(R.string.activity_two), Toast.LENGTH_SHORT).show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

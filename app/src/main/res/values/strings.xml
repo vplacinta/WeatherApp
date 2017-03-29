@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">WeatherApp</string>
+    <string name="on_response_text">Data has updated</string>
+    <string name="on_failure_text">Network problem</string>
+    <string name="activity_two">"ActivityTwo"</string>
+    <string name="base_url">https://andfun-weather.udacity.com</string>
 </resources>

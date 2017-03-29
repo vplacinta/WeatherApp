@@ -1,5 +1,7 @@
 package com.internship.weatherapp;
 
+import android.content.Context;
+
 import com.internship.weatherapp.api.WeatherAPI;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -7,10 +9,14 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiFactory {
 
-    public static WeatherAPI createAPI() {
+    private Context context;
+
+    public WeatherAPI createAPI(Context context) {
+        this.context = context;
+
          Retrofit retrofit;
         retrofit = new Retrofit.Builder()
-                .baseUrl("https://andfun-weather.udacity.com")
+                .baseUrl(context.getResources().getString(R.string.base_url))
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
          return  retrofit.create(WeatherAPI.class);
