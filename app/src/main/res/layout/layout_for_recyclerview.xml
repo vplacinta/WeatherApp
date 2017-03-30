@@ -2,7 +2,7 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:paddingBottom="10dp">
 
@@ -10,8 +10,8 @@
         android:id="@+id/imageView"
         android:layout_width="40dp"
         android:layout_height="39dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="13dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/sun" />
@@ -20,11 +20,11 @@
         android:id="@+id/dayName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="7dp"
-        android:layout_marginTop="0dp"
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="16dp"
         android:text="Tommorow"
-        app:layout_constraintLeft_toRightOf="@+id/imageView"
-        app:layout_constraintTop_toTopOf="@+id/imageView" />
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/dayState"
@@ -40,8 +40,8 @@
         android:id="@+id/maxTemperature"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="195dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginLeft="240dp"
+        android:layout_marginTop="17dp"
         android:text="26"
         app:layout_constraintLeft_toRightOf="@+id/imageView"
         app:layout_constraintTop_toTopOf="@+id/imageView" />

@@ -3,6 +3,7 @@ package com.internship.weatherapp.model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.internship.weatherapp.R;
 
 public class Weather {
 
@@ -18,6 +19,8 @@ public class Weather {
     @SerializedName("icon")
     @Expose
     private String icon;
+
+    private  int image;
 
     public Integer getId() {
         return id;
@@ -51,4 +54,37 @@ public class Weather {
         this.icon = icon;
     }
 
+    public int getImage() {
+        switch (id)
+        {
+            case 500:
+            case  501:
+                return R.drawable.ic_light_rain;
+
+            case 800:
+            case  801:
+                return R.drawable.ic_clear;
+
+            case 803:
+            case  802:
+                return R.drawable.ic_cloudy;
+
+            case 600:
+            case 602:
+            case  601:
+            case  611:
+                return R.drawable.ic_snow;
+
+            case  741:
+                return R.drawable.ic_fog;
+
+            case  960:
+            case  901:
+            case  902:
+                return R.drawable.ic_storm;
+
+            default:
+                return  R.drawable.sun;
+        }
+    }
 }

@@ -3,6 +3,9 @@ package com.internship.weatherapp;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,6 +15,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.internship.weatherapp.model.WeatherResponse;
@@ -26,6 +30,9 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
 
+    @BindView(R.id.coordinatorLayout)
+    CoordinatorLayout coordinatorLayout;
+
     @BindView(R.id.swiperefresh)
     SwipeRefreshLayout swiperefresh;
 
@@ -36,17 +43,19 @@ public class MainActivity extends AppCompatActivity {
     private static String MODE="json";
     private static String UNITS="metric";
     private static int DAYS_COUNT=5;
+    private  static int themeVersion=0;
     private SharedPreferences sharedPref ;
+    private  Snackbar snackbar;
 
     @Override
     protected void onResume() {
+        if(themeVersion!=Integer.parseInt(sharedPref.getString("Theme_list", "-1"))) {
+            ThemeUtils.changeToTheme(this, Integer.parseInt(sharedPref.getString("Theme_list", "-1")));
+        themeVersion=Integer.parseInt(sharedPref.getString("Theme_list", "-1"));
+        }
         makeRequest();
-        Boolean themePref= sharedPref.getBoolean("DarkTheme",true);
-        Boolean locationPref= sharedPref.getBoolean("Location",true);
-        if (locationPref)
-   setTitle(getResources().getString(R.string.Weather)+" "+ LOCATION);
-        else
-setTitle(getResources().getString(R.string.Weather));
+        LOCATION=sharedPref.getString("location"," ");
+        setTitle(getResources().getString(R.string.Weather) + " "+LOCATION);
 
         super.onResume();
     }
@@ -55,17 +64,22 @@ setTitle(getResources().getString(R.string.Weather));
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
+        ThemeUtils.onActivityCreateSetTheme(this);
         setContentView(R.layout.main);
         ButterKnife.bind(this);
-        unbinder = ButterKnife.bind(this);
+
+
+
+        snackbar = Snackbar.make(coordinatorLayout,  getResources().getText(R.string.on_response_text), Snackbar.LENGTH_LONG);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+
+
         makeRequest();
 
         swiperefresh.setOnRefreshListener(
@@ -82,16 +96,20 @@ setTitle(getResources().getString(R.string.Weather));
     }
 
     public void makeRequest() {
+
         ApiFactory apiFactory= new ApiFactory();
         apiFactory.createAPI(getBaseContext()).getData(LOCATION, MODE, UNITS, DAYS_COUNT).enqueue(new Callback<WeatherResponse>() {
 
             @Override
             public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
                 weatherList = response.body();
-                Toast.makeText(MainActivity.this, getResources().getText(R.string.on_response_text), Toast.LENGTH_SHORT).show();
                 mAdapter = new Adapter(weatherList,getBaseContext());
                 recyclerView.setAdapter(mAdapter);
+                snackbar.show();
                 swiperefresh.setRefreshing(false);
+
+
+
             }
 
             @Override
@@ -104,7 +122,6 @@ setTitle(getResources().getString(R.string.Weather));
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unbinder.unbind();
     }
 
     @Override

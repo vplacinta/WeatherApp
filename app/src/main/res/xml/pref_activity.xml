@@ -1,52 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-<CheckBoxPreference
-    android:key="dayName"
-    android:title="Show day of week"
-    android:summary="Choose"
-    android:defaultValue="true"
-    ></CheckBoxPreference>
 
-    <CheckBoxPreference
-        android:key="dayState"
-        android:title="Show weather"
-        android:summary="Choose"
-        android:defaultValue="true"
-        ></CheckBoxPreference>
 
-    <CheckBoxPreference
-        android:key="minTemperature"
-        android:title="Show minTemperature"
-        android:summary="Choose"
+    <PreferenceCategory android:title="Select to show">
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="dayName"
+            android:summary="Choose"
+            android:title="Show day of week"></CheckBoxPreference>
 
-        android:defaultValue="true"
-        ></CheckBoxPreference>
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="dayState"
+            android:summary="Choose"
+            android:title="Show weather"></CheckBoxPreference>
 
-    <CheckBoxPreference
-        android:key="maxTemperature"
-        android:title="Show maxTemperature"
-        android:summary="Choose"
-        android:defaultValue="true"
-        ></CheckBoxPreference>
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="minTemperature"
+            android:summary="Choose"
 
-    <CheckBoxPreference
-        android:key="imageView"
-        android:title="Show image"
-        android:summary="Choose"
-        android:defaultValue="true"
-        ></CheckBoxPreference>
+            android:title="Show minTemperature"></CheckBoxPreference>
 
-    <CheckBoxPreference
-        android:key="DarkTheme"
-        android:title="Dark theme"
-        android:summary="Choose theme"
-        android:defaultValue="false"
-        ></CheckBoxPreference>
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="maxTemperature"
+            android:summary="Choose"
+            android:title="Show maxTemperature"></CheckBoxPreference>
 
-    <CheckBoxPreference
-        android:key="Location"
-        android:title="Show Location"
-        android:summary="Choose"
-        android:defaultValue="true"
-        ></CheckBoxPreference>
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="imageView"
+            android:summary="Choose"
+            android:title="Show image"></CheckBoxPreference>
+    </PreferenceCategory>
+
+
+    <PreferenceCategory android:title="Theme">
+        <ListPreference
+            android:entries="@array/listentries"
+            android:entryValues="@array/listvalues"
+            android:key="Theme_list"
+            android:title="Select theme" />
+
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Location">
+
+        <EditTextPreference
+            android:key="location"
+            android:title="Select Location"></EditTextPreference>
+
+    </PreferenceCategory>
 </PreferenceScreen>

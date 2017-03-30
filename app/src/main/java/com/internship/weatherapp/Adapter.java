@@ -57,7 +57,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder> {
         holder.dayState.setText(list.get(position).getWeather().get(0).getDescription().toString());
         holder.maxTemperature.setText(list.get(position).getTemp().getMax().intValue()+"°C");
         holder.minTemperature.setText(list.get(position).getTemp().getMin().intValue()+"°C");
-
+        holder.imageView.setImageDrawable(context.getResources().getDrawable(list.get(position).getWeather().get(0).getImage()));
 
         Boolean dayNamePref= sharedPref.getBoolean("dayName",false);
         Boolean dayStatePref= sharedPref.getBoolean("dayState",false);
