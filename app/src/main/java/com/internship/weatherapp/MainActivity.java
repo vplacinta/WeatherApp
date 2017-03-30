@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -14,9 +13,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 import com.internship.weatherapp.model.WeatherResponse;
 import butterknife.BindView;
@@ -69,8 +65,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.main);
         ButterKnife.bind(this);
 
-
-
         snackbar = Snackbar.make(coordinatorLayout,  getResources().getText(R.string.on_response_text), Snackbar.LENGTH_LONG);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
@@ -107,9 +101,6 @@ public class MainActivity extends AppCompatActivity {
                 recyclerView.setAdapter(mAdapter);
                 snackbar.show();
                 swiperefresh.setRefreshing(false);
-
-
-
             }
 
             @Override
@@ -128,7 +119,9 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.item:
-                startActivity(new Intent(this,SettingsActivity.class));
+
+             //  startActivity(new Intent(this,SettingsActivity.class));  //Explicit
+                startActivity(new Intent( "android.intent.action_send")); //implicit
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
