@@ -1,11 +1,11 @@
-package com.eparpalac.app;
+package com.internship.weatherapp;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 class ApiClient {
 
-    private static final String BASE_URL = "https://andfun-weather.udacity.com/staticweather/";
+    private static final String BASE_URL = "https://andfun-weather.udacity.com";
     private static Retrofit retrofit = null;
 
     static Retrofit getClient() {

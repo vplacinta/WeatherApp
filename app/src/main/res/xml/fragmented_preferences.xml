@@ -1,0 +1,47 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@drawable/gradient">
+
+    <PreferenceCategory android:title="General Settings">
+        <ListPreference
+            android:entries="@array/theme_styles"
+            android:entryValues="@array/theme_styles"
+            android:key="theme_pref"
+            android:summary="@string/theme_summary"
+            android:title="@string/title_theme" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="City settings">
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="pref_city"
+            android:summary="@string/city_summary"
+            android:title="@string/title_city" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Date settings">
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref_date"
+            android:summary="@string/date_summary"
+            android:title="@string/title_date" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Temperature settings">
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="pref_temp_day"
+            android:summary="@string/tempday_summary"
+            android:title="@string/title_daytemp" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="pref_temp_night"
+            android:summary="@string/tempnight_summary"
+            android:title="@string/title_nighttemp" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

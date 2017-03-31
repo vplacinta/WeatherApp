@@ -1,6 +1,6 @@
-package com.eparpalac.app;
+package com.internship.weatherapp;
 
-import com.eparpalac.app.models.WeatherResponse;
+import com.internship.weatherapp.models.WeatherResponse;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -8,6 +8,6 @@ import retrofit2.http.Query;
 
 interface ApiInterface {
 
-    @GET("?")
+    @GET("staticweather")
     Call<WeatherResponse> getWeatherData(@Query("q") String q);
 }

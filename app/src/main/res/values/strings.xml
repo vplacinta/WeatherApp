@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">WeatherApp</string>
-    <string name="new_activity">New Activity</string>
+    <string name="str_preference_activity">Settings</string>
     <string name="item_text">Item selected</string>
     <string name="str_begin">Begin</string>
     <string name="str_end">End</string>
@@ -9,4 +9,26 @@
     <string name="tomorrow">Tomorrow</string>
     <string name="item_refresh_data">Refresh data</string>
     <string name="msg_failure">Failed to refresh data</string>
+    <string name="theme_summary">Select the theme of application which you would like to use</string>
+    <string name="city_summary">This option if selected will allow the application to display city</string>
+    <string name="date_summary">This option if selected will allow the application to display date</string>
+    <string name="tempday_summary">This option if selected will allow the application to display day temperature</string>
+    <string name="tempnight_summary">This option if selected will allow the application to display night temperature</string>
+    <string name="title_theme">Change theme</string>
+    <string name="title_city">Display city</string>
+    <string name="title_date">Display date</string>
+    <string name="title_daytemp">Display day temperature</string>
+    <string name="title_nighttemp">Display night temperature</string>
+    <string name="toolbar_str_weather_in">Weather in Mountain View</string>
+
+    <string-array name="theme_styles">
+        <item>Dark</item>
+        <item>Light</item>
+    </string-array>
+
+    <string-array name="entry_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
 </resources>
