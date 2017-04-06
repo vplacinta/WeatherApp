@@ -1,14 +1,14 @@
-package com.internship.weatherapp;
+package com.internship.weatherapp.api;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-class ApiClient {
+public class ApiClient {
 
     private static final String BASE_URL = "https://andfun-weather.udacity.com";
     private static Retrofit retrofit = null;
 
-    static Retrofit getClient() {
+    public static Retrofit getClient() {
         if (retrofit == null) {
             retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)

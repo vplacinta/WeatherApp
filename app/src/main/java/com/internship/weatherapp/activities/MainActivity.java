@@ -1,5 +1,6 @@
-package com.internship.weatherapp;
+package com.internship.weatherapp.activities;
 
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -12,11 +13,20 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
+import com.internship.weatherapp.WeatherStorage;
+import com.internship.weatherapp.fragments.VerticalItemFragment;
+import com.internship.weatherapp.interfaces.ClickListenerInterface;
+import com.internship.weatherapp.R;
+import com.internship.weatherapp.listeners.RecyclerTouchListener;
+import com.internship.weatherapp.utils.Logger;
+import com.internship.weatherapp.views.adapters.WeatherAdapter;
+import com.internship.weatherapp.api.ApiClient;
+import com.internship.weatherapp.interfaces.ApiInterface;
 import com.internship.weatherapp.models.WeatherItem;
 import com.internship.weatherapp.models.WeatherResponse;
 
@@ -31,6 +41,9 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String THEME_PREFERENCE = "theme_pref";
+    private static final String WEATHER_DATA = "Mountain View, CA 94043";
+
     private int SETTINGS_ACTION = 1;
 
     @BindView(R.id.toolbar)
@@ -45,62 +58,71 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
 
         // ------------------------------ Set Theme ------------------------------
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        String themeName = pref.getString("theme_pref", "Light");
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String themeName = sharedPreferences.getString(THEME_PREFERENCE, getString(R.string.theme_light));
 
-        if (themeName.equals("Dark")) {
-            setTheme(R.style.AppTheme2);
-        } else if (themeName.equals("Light")) {
+        if (themeName.equals(getString(R.string.theme_dark))) {
+            setTheme(R.style.DarkTheme);
+            Toast.makeText(this, "Theme has been reset to " + themeName, Toast.LENGTH_SHORT).show();
+        } else if (themeName.equals(getString(R.string.theme_light))) {
             Toast.makeText(this, "set theme", Toast.LENGTH_SHORT).show();
-            setTheme(R.style.AppTheme);
+            setTheme(R.style.LightTheme);
+            Toast.makeText(this, "Theme has been reset to " + themeName, Toast.LENGTH_SHORT).show();
         }
-
-        Toast.makeText(this, "Theme has been reset to " + themeName, Toast.LENGTH_SHORT).show();
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
 
-        // ------------------------------ RecyclerView ------------------------------
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(mLayoutManager);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(this, recyclerView, new ClickListenerInterface() {
+            @Override
+            public void onClick(View view, int position) {
+//                Toast.makeText(getApplicationContext(), "CLICK 111", Toast.LENGTH_SHORT).show();
+//                startActivityForResult(new Intent(getApplicationContext(), DetailsActivity.class), SETTINGS_ACTION);
 
-        // --------------------------------- Toolbar ---------------------------------
+//                recyclerView.getLayoutManager().findViewByPosition(position);
+                FragmentManager fragmentManager = getFragmentManager();
+                VerticalItemFragment dFragment = new VerticalItemFragment();
+                // Show DialogFragment
+                dFragment.show(fragmentManager, "Dialog Fragment");
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+                Toast.makeText(getApplicationContext(), "CLICK 222", Toast.LENGTH_SHORT).show();
+            }
+        }));
+
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setIcon(R.mipmap.ic_logo);
 
-        new MyTask().execute();
+        loadItems();
 
-        // --------------------------------- Swipe ---------------------------------
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                // Refresh items
-                refreshItems();
+                loadItems();
             }
         });
 
-        // -------------------------------- Logger ---------------------------------
-        new Logger(true);
     }
 
-    void refreshItems() {
+    void loadItems() {
         new MyTask().execute();
-        // Load complete
-        onItemsLoadComplete();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        refreshItems();
+        loadItems();
     }
 
     void onItemsLoadComplete() {
-        // Stop refresh animation
         swipeContainer.setRefreshing(false);
     }
 
@@ -115,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
 
         switch (item.getItemId()) {
             case R.id.item_newactivity:
-                startActivityForResult(new Intent(this, MyPreferenceActivity.class), SETTINGS_ACTION);
+                startActivityForResult(new Intent(this, SettingsActivity.class), SETTINGS_ACTION);
                 break;
 
             default:
@@ -127,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == SETTINGS_ACTION) {
-            if (resultCode == MyPreferenceActivity.RESULT_CODE_THEME_UPDATED) {
+            if (resultCode == SettingsActivity.RESULT_CODE_THEME_UPDATED) {
                 finish();
                 startActivity(getIntent());
                 return;
@@ -150,23 +172,25 @@ public class MainActivity extends AppCompatActivity {
     public void getData() {
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
 
-        Call<WeatherResponse> call = apiService.getWeatherData("Mountain View, CA 94043");
+        Call<WeatherResponse> call = apiService.getWeatherData(WEATHER_DATA);
 
         call.enqueue(new Callback<WeatherResponse>() {
             @Override
             public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
                 List<WeatherItem> weather = response.body().getWeatherItem();
 
-                Logger.logString(MainActivity.this, "Number of items received: " + weather.size());
-                Logger.logString(MainActivity.this, "Response " + response.code());
+                Logger.logString(TAG, getString(R.string.str_received_items) + weather.size());
+                Logger.logString(TAG, getString(R.string.str_response) + response.code());
 
-                recyclerView.setAdapter(new MyAdapter(weather, getApplicationContext()));
+                onItemsLoadComplete();
+                WeatherStorage.getInstance().setList(weather);
+
+                recyclerView.setAdapter(new WeatherAdapter(weather, getApplicationContext()));
             }
 
             @Override
             public void onFailure(Call<WeatherResponse> call, Throwable t) {
-                // Log error here since request failed
-                Log.e(TAG, t.toString());
+                Logger.logString(TAG,  getString(R.string.str_received_items) + t.toString());
                 Toast.makeText(getApplication(), getString(R.string.msg_failure), Toast.LENGTH_SHORT).show();
             }
         });

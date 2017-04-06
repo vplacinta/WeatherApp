@@ -20,6 +20,11 @@
     <string name="title_daytemp">Display day temperature</string>
     <string name="title_nighttemp">Display night temperature</string>
     <string name="toolbar_str_weather_in">Weather in Mountain View</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="str_received_items">Number of items received:</string>
+    <string name="str_response">Response</string>
+    <string name="grade_simbol">℃</string>
 
     <string-array name="theme_styles">
         <item>Dark</item>

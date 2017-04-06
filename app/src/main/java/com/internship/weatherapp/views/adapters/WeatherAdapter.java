@@ -1,4 +1,4 @@
-package com.internship.weatherapp;
+package com.internship.weatherapp.views.adapters;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.internship.weatherapp.R;
 import com.internship.weatherapp.models.WeatherItem;
 
 import java.text.SimpleDateFormat;
@@ -19,11 +20,18 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
+public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.ViewHolder> {
 
-    private List<WeatherItem> mDataset;
+    private static final String DATE_PREFERENCE = "pref_date";
+    private static final String TEMP_NIGHT_PREFERENCE = "pref_temp_night";
+    private static final String TEMP_DAY_PREFERENCE = "pref_temp_day";
 
-    private SharedPreferences sp;
+    private List<WeatherItem> weatherList;
+
+//     WeatherStorage.getInstance().getList();
+//     WeatherStorage.getInstance().setList(asdas);
+
+    private SharedPreferences sharedPreferences;
     private Context context;
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -38,55 +46,50 @@ class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         TextView tempNight;
 
         @BindView(R.id.iv_item)
-        ImageView image;
+        ImageView weatherImage;
 
         ViewHolder(View v) {
             super(v);
             ButterKnife.bind(this, v);
         }
-
     }
 
-    // Provide a suitable constructor
-    MyAdapter(List<WeatherItem> myDataset, Context context) {
-        mDataset = myDataset;
+    public WeatherAdapter(List<WeatherItem> weatherList, Context context) {
+        this.weatherList = weatherList;
         this.context = context;
     }
 
-    // Create new views
     @Override
-    public MyAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public WeatherAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item, parent, false);
-        sp = PreferenceManager.getDefaultSharedPreferences(context);
-
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         return new ViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        WeatherItem weather = mDataset.get(position);
+        WeatherItem weather = weatherList.get(position);
 
         String state = weather.getWeather().get(0).getMain();
         holder.state.setText(state);
 
-        Boolean date_pref = sp.getBoolean("pref_date", true);
-        Boolean night_temp_pref = sp.getBoolean("pref_temp_night", true);
-        Boolean day_temp_pref = sp.getBoolean("pref_temp_day", true);
+        Boolean date_pref = sharedPreferences.getBoolean(DATE_PREFERENCE, true);
+        Boolean night_temp_pref = sharedPreferences.getBoolean(TEMP_NIGHT_PREFERENCE, true);
+        Boolean day_temp_pref = sharedPreferences.getBoolean(TEMP_DAY_PREFERENCE, true);
 
-        holder.image.setImageResource((Integer) weather.getWeather().get(0).getIconPath());
+        holder.weatherImage.setImageResource((Integer) weather.getWeather().get(0).getIconPath());
 
         if (date_pref.equals(false)) {
             holder.day.setVisibility(View.INVISIBLE);
         } else {
-
-            String day = weather.getDt(); // Get date in unix-format
-            String substr = day.substring(0, day.indexOf(".")); // Get substring drom string
+            String day = weather.getDt();
+            String substr = day.substring(0, day.indexOf("."));
             long longSubstr = Long.parseLong(substr);
 
-            Date date = new Date(longSubstr * 1000L); // *1000 is to convert seconds to milliseconds
-            SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, ''yy"); // the format of your date
-            String formattedDate = sdf.format(date);
+            Date date = new Date(longSubstr * 1000L);
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEE, MMM d, ''yy");
+            String formattedDate = simpleDateFormat.format(date);
             System.out.println(formattedDate);
 
             holder.day.setText(formattedDate);
@@ -96,21 +99,21 @@ class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             holder.tempNight.setVisibility(View.INVISIBLE);
         } else {
             String tempNight = weather.getTemp().getNight().toString();
-            holder.tempNight.setText(tempNight + " \u2103");
+            holder.tempNight.setText(tempNight + context.getString(R.string.grade_simbol));
         }
 
         if (day_temp_pref.equals(false)) {
             holder.tempDay.setVisibility(View.INVISIBLE);
         } else {
             String tempday = weather.getTemp().getMorn().toString();
-            holder.tempDay.setText(tempday + " \u2103");
+            holder.tempDay.setText(tempday + context.getString(R.string.grade_simbol));
         }
 
     }
 
     @Override
     public int getItemCount() {
-        return mDataset.size();
+        return weatherList.size();
     }
 
 }
