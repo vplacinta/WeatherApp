@@ -1,6 +1,6 @@
 package com.internship.weatherapp.activities;
 
-import android.app.FragmentManager;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private int SETTINGS_ACTION = 1;
 
     @BindView(R.id.toolbar)
-    Toolbar toolbar;
+    public Toolbar toolbar;
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
 
@@ -57,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
 
-        // ------------------------------ Set Theme ------------------------------
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         String themeName = sharedPreferences.getString(THEME_PREFERENCE, getString(R.string.theme_light));
 
@@ -65,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
             setTheme(R.style.DarkTheme);
             Toast.makeText(this, "Theme has been reset to " + themeName, Toast.LENGTH_SHORT).show();
         } else if (themeName.equals(getString(R.string.theme_light))) {
-            Toast.makeText(this, "set theme", Toast.LENGTH_SHORT).show();
             setTheme(R.style.LightTheme);
             Toast.makeText(this, "Theme has been reset to " + themeName, Toast.LENGTH_SHORT).show();
         }
@@ -81,14 +79,22 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(this, recyclerView, new ClickListenerInterface() {
             @Override
             public void onClick(View view, int position) {
-//                Toast.makeText(getApplicationContext(), "CLICK 111", Toast.LENGTH_SHORT).show();
 //                startActivityForResult(new Intent(getApplicationContext(), DetailsActivity.class), SETTINGS_ACTION);
 
-//                recyclerView.getLayoutManager().findViewByPosition(position);
-                FragmentManager fragmentManager = getFragmentManager();
-                VerticalItemFragment dFragment = new VerticalItemFragment();
+                Bundle args = new Bundle();
+                args.putString("key", String.valueOf(position));
+
+//                FragmentManager fragmentManager = getFragmentManager();
+                VerticalItemFragment verticalFragment = new VerticalItemFragment();
+                verticalFragment.setArguments(args);
+
+                getFragmentManager().beginTransaction()
+                        .replace(android.R.id.content, verticalFragment)
+                        .commit();
+
                 // Show DialogFragment
-                dFragment.show(fragmentManager, "Dialog Fragment");
+//                verticalFragment.show(fragmentManager, "Dialog Fragment");
+
             }
 
             @Override
@@ -166,7 +172,6 @@ public class MainActivity extends AppCompatActivity {
             getData();
             return null;
         }
-
     }
 
     public void getData() {

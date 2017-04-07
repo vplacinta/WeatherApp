@@ -28,9 +28,6 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.ViewHold
 
     private List<WeatherItem> weatherList;
 
-//     WeatherStorage.getInstance().getList();
-//     WeatherStorage.getInstance().setList(asdas);
-
     private SharedPreferences sharedPreferences;
     private Context context;
 
