@@ -3,10 +3,14 @@ package com.internship.weatherapp.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -16,13 +20,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.internship.weatherapp.WeatherStorage;
-import com.internship.weatherapp.fragments.VerticalItemFragment;
-import com.internship.weatherapp.interfaces.ClickListenerInterface;
+import com.internship.weatherapp.fragments.WeatherDetailFragment;
+import com.internship.weatherapp.interfaces.OnItemClickListenerInterface;
 import com.internship.weatherapp.R;
-import com.internship.weatherapp.listeners.RecyclerTouchListener;
 import com.internship.weatherapp.utils.Logger;
 import com.internship.weatherapp.views.adapters.WeatherAdapter;
 import com.internship.weatherapp.api.ApiClient;
@@ -38,11 +40,13 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnItemClickListenerInterface {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String THEME_PREFERENCE = "theme_pref";
     private static final String WEATHER_DATA = "Mountain View, CA 94043";
+    private static final String LIGHT_THEME = "Theme is light";
+    private static final String DARK_THEME = "Theme is dark";
 
     private int SETTINGS_ACTION = 1;
 
@@ -54,18 +58,24 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.swipeContainer)
     SwipeRefreshLayout swipeContainer;
 
+    @BindView(R.id.coordinatorLayout)
+    CoordinatorLayout coordinatorLayout;
+
+    Boolean isPhone;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         String themeName = sharedPreferences.getString(THEME_PREFERENCE, getString(R.string.theme_light));
+        String themeState = null;
 
         if (themeName.equals(getString(R.string.theme_dark))) {
             setTheme(R.style.DarkTheme);
-            Toast.makeText(this, "Theme has been reset to " + themeName, Toast.LENGTH_SHORT).show();
+            themeState = DARK_THEME;
         } else if (themeName.equals(getString(R.string.theme_light))) {
             setTheme(R.style.LightTheme);
-            Toast.makeText(this, "Theme has been reset to " + themeName, Toast.LENGTH_SHORT).show();
+            themeState = LIGHT_THEME;
         }
 
         super.onCreate(savedInstanceState);
@@ -73,35 +83,23 @@ public class MainActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
+        if (getResources().getBoolean(R.bool.portrait_only)) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            isPhone = true;
+        } else {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            isPhone = false;
+        }
+
+        if (themeState != null) {
+            Snackbar snackbar = Snackbar
+                    .make(coordinatorLayout, themeState, Snackbar.LENGTH_LONG);
+            snackbar.show();
+        }
+
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(this, recyclerView, new ClickListenerInterface() {
-            @Override
-            public void onClick(View view, int position) {
-//                startActivityForResult(new Intent(getApplicationContext(), DetailsActivity.class), SETTINGS_ACTION);
-
-                Bundle args = new Bundle();
-                args.putString("key", String.valueOf(position));
-
-//                FragmentManager fragmentManager = getFragmentManager();
-                VerticalItemFragment verticalFragment = new VerticalItemFragment();
-                verticalFragment.setArguments(args);
-
-                getFragmentManager().beginTransaction()
-                        .replace(android.R.id.content, verticalFragment)
-                        .commit();
-
-                // Show DialogFragment
-//                verticalFragment.show(fragmentManager, "Dialog Fragment");
-
-            }
-
-            @Override
-            public void onLongClick(View view, int position) {
-                Toast.makeText(getApplicationContext(), "CLICK 222", Toast.LENGTH_SHORT).show();
-            }
-        }));
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -119,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void loadItems() {
-        new MyTask().execute();
+        new LoadWeatherTask().execute();
     }
 
     @Override
@@ -128,7 +126,13 @@ public class MainActivity extends AppCompatActivity {
         loadItems();
     }
 
-    void onItemsLoadComplete() {
+    void onItemsLoadComplete(List<WeatherItem> weatherList) {
+
+        Logger.logString(TAG, getString(R.string.str_received_items) + weatherList.size());
+
+        WeatherStorage.getInstance().setList(weatherList);
+
+        recyclerView.setAdapter(new WeatherAdapter(getApplicationContext(), this));
         swipeContainer.setRefreshing(false);
     }
 
@@ -145,11 +149,21 @@ public class MainActivity extends AppCompatActivity {
             case R.id.item_newactivity:
                 startActivityForResult(new Intent(this, SettingsActivity.class), SETTINGS_ACTION);
                 break;
+            case android.R.id.home:
+                onBackPressed();
+                break;
 
             default:
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        recyclerView.setVisibility(View.VISIBLE);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
     }
 
     @Override
@@ -164,8 +178,35 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    @Override
+    public void onItemClick(int position) {
+        Bundle args = new Bundle();
+        args.putInt(WeatherDetailFragment.POSITION_KEY, position);
 
-    private class MyTask extends AsyncTask<Void, Void, Void> {
+        WeatherDetailFragment verticalFragment = new WeatherDetailFragment();
+        verticalFragment.setArguments(args);
+
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+
+        if (isPhone) {
+            ft.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
+            ft.replace(R.id.frameLayout, verticalFragment);
+            ft.addToBackStack(null);
+
+            recyclerView.setVisibility(View.INVISIBLE);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        } else {
+            ft.setCustomAnimations(R.anim.slide_in, R.anim.slide_out);
+            ft.replace(R.id.frameLayout2, verticalFragment);
+        }
+
+        ft.commit();
+
+    }
+
+
+    private class LoadWeatherTask extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected Void doInBackground(Void... params) {
@@ -182,21 +223,15 @@ public class MainActivity extends AppCompatActivity {
         call.enqueue(new Callback<WeatherResponse>() {
             @Override
             public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
-                List<WeatherItem> weather = response.body().getWeatherItem();
-
-                Logger.logString(TAG, getString(R.string.str_received_items) + weather.size());
-                Logger.logString(TAG, getString(R.string.str_response) + response.code());
-
-                onItemsLoadComplete();
-                WeatherStorage.getInstance().setList(weather);
-
-                recyclerView.setAdapter(new WeatherAdapter(weather, getApplicationContext()));
+                onItemsLoadComplete(response.body().getWeatherItem());
             }
 
             @Override
             public void onFailure(Call<WeatherResponse> call, Throwable t) {
-                Logger.logString(TAG,  getString(R.string.str_received_items) + t.toString());
-                Toast.makeText(getApplication(), getString(R.string.msg_failure), Toast.LENGTH_SHORT).show();
+                Logger.logString(TAG, getString(R.string.str_received_items) + t.toString());
+                Snackbar snackbar = Snackbar
+                        .make(coordinatorLayout, getString(R.string.msg_failure), Snackbar.LENGTH_LONG);
+                snackbar.show();
             }
         });
     }

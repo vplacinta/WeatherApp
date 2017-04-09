@@ -11,6 +11,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.internship.weatherapp.R;
+import com.internship.weatherapp.WeatherStorage;
+import com.internship.weatherapp.interfaces.OnItemClickListenerInterface;
 import com.internship.weatherapp.models.WeatherItem;
 
 import java.text.SimpleDateFormat;
@@ -30,6 +32,8 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.ViewHold
 
     private SharedPreferences sharedPreferences;
     private Context context;
+    private final OnItemClickListenerInterface clickListener;
+
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -49,11 +53,13 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.ViewHold
             super(v);
             ButterKnife.bind(this, v);
         }
+
     }
 
-    public WeatherAdapter(List<WeatherItem> weatherList, Context context) {
-        this.weatherList = weatherList;
+    public WeatherAdapter(Context context, OnItemClickListenerInterface clickListener) {
+        this.weatherList = WeatherStorage.getInstance().getList();
         this.context = context;
+        this.clickListener = clickListener;
     }
 
     @Override
@@ -64,23 +70,23 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, final int position) {
 
-        WeatherItem weather = weatherList.get(position);
+        WeatherItem weatherItem = weatherList.get(position);
 
-        String state = weather.getWeather().get(0).getMain();
+        String state = weatherItem.getWeather().get(0).getMain();
         holder.state.setText(state);
 
         Boolean date_pref = sharedPreferences.getBoolean(DATE_PREFERENCE, true);
         Boolean night_temp_pref = sharedPreferences.getBoolean(TEMP_NIGHT_PREFERENCE, true);
         Boolean day_temp_pref = sharedPreferences.getBoolean(TEMP_DAY_PREFERENCE, true);
 
-        holder.weatherImage.setImageResource((Integer) weather.getWeather().get(0).getIconPath());
+        holder.weatherImage.setImageResource((Integer) weatherItem.getWeather().get(0).getIconPath());
 
         if (date_pref.equals(false)) {
             holder.day.setVisibility(View.INVISIBLE);
         } else {
-            String day = weather.getDt();
+            String day = weatherItem.getDt();
             String substr = day.substring(0, day.indexOf("."));
             long longSubstr = Long.parseLong(substr);
 
@@ -95,16 +101,24 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.ViewHold
         if (night_temp_pref.equals(false)) {
             holder.tempNight.setVisibility(View.INVISIBLE);
         } else {
-            String tempNight = weather.getTemp().getNight().toString();
-            holder.tempNight.setText(tempNight + context.getString(R.string.grade_simbol));
+            StringBuilder stringBuilder = new StringBuilder(weatherItem.getTemp().getNight().toString());
+            holder.tempNight.setText(stringBuilder.append(context.getString(R.string.grade_simbol)));
         }
 
         if (day_temp_pref.equals(false)) {
             holder.tempDay.setVisibility(View.INVISIBLE);
         } else {
-            String tempday = weather.getTemp().getMorn().toString();
-            holder.tempDay.setText(tempday + context.getString(R.string.grade_simbol));
+            StringBuilder stringBuilder = new StringBuilder(weatherItem.getTemp().getMorn().toString());
+            holder.tempDay.setText(stringBuilder.append(context.getString(R.string.grade_simbol)));
         }
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                clickListener.onItemClick(position);
+            }
+        });
 
     }
 

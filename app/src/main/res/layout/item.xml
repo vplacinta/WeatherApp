@@ -3,17 +3,17 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginLeft="20dp"
-    android:clickable="true"
-    android:focusable="true"
-    android:background="?android:attr/selectableItemBackground"
     android:layout_marginRight="20dp"
-    android:layout_marginTop="5dp">
+    android:layout_marginTop="5dp"
+    android:background="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true">
 
     <ImageView
         android:id="@+id/iv_item"
         android:layout_width="55dp"
         android:layout_height="55dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="@dimen/top_margin"
         android:src="@mipmap/sun" />
 
     <TextView
@@ -24,9 +24,8 @@
         android:layout_marginTop="15dp"
         android:layout_toRightOf="@+id/iv_item"
         android:fontFamily="sans-serif"
-        android:text=""
         android:textColor="@color/black"
-        android:textSize="20sp" />
+        android:textSize="@dimen/txt_size20" />
 
     <TextView
         android:id="@+id/tv_temp_day"
@@ -36,9 +35,8 @@
         android:layout_marginTop="15dp"
         android:layout_toRightOf="@+id/tv_day"
         android:gravity="right"
-        android:text=""
         android:textColor="@color/black"
-        android:textSize="20sp" />
+        android:textSize="@dimen/txt_size20" />
 
     <TextView
         android:id="@+id/tv_temp_night"
@@ -48,7 +46,6 @@
         android:layout_marginRight="15dp"
         android:layout_toRightOf="@+id/tv_state"
         android:gravity="right"
-        android:text=""
         android:textSize="12sp" />
 
     <TextView
@@ -58,7 +55,6 @@
         android:layout_below="@+id/tv_day"
         android:layout_marginLeft="15dp"
         android:layout_toRightOf="@+id/iv_item"
-        android:text=""
         android:textSize="12sp" />
 
 </RelativeLayout>

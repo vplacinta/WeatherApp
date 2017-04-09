@@ -25,15 +25,11 @@
     <string name="str_received_items">Number of items received:</string>
     <string name="str_response">Response</string>
     <string name="grade_simbol">℃</string>
+    <string name="msg_choose_item">Please select an item to see more information</string>
 
     <string-array name="theme_styles">
         <item>Dark</item>
         <item>Light</item>
     </string-array>
 
-    <string-array name="entry_values">
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-    </string-array>
 </resources>

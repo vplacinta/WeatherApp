@@ -25,7 +25,9 @@
             android:id="@+id/frameLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/toolbar">
+            android:layout_below="@+id/toolbar"
+            android:layout_toLeftOf="@+id/secondView"
+            android:orientation="vertical">
 
             <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:id="@+id/swipeContainer"
@@ -45,6 +47,45 @@
                     android:scrollbars="vertical" />
 
             </android.support.v4.widget.SwipeRefreshLayout>
+
+        </FrameLayout>
+
+        <View
+            android:id="@+id/secondView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true" />
+
+        <FrameLayout
+            android:id="@+id/frameLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/toolbar"
+            android:layout_toRightOf="@+id/secondView"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/iv_fr_img"
+                    android:layout_width="@dimen/img_width"
+                    android:layout_height="@dimen/img_height"
+                    android:layout_centerInParent="true"
+                    android:src="@mipmap/sun" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/iv_fr_img"
+                    android:gravity="center"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:text="@string/msg_choose_item"
+                    android:textSize="@dimen/txt_size20" />
+            </RelativeLayout>
 
         </FrameLayout>
 

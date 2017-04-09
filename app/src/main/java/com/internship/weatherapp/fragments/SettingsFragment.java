@@ -6,7 +6,6 @@ import android.preference.PreferenceFragment;
 
 import com.internship.weatherapp.R;
 
-
 public class SettingsFragment extends PreferenceFragment {
 
     public static final int RESULT_CODE_THEME_UPDATED = 1;
